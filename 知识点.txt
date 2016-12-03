@@ -1,0 +1,33 @@
+﻿
+一：无限级分类的实现方式：
+
+1、以父ID实现的无限分类：使用递归算法。
+表中一个字段id，一个字段pid(父id)。可根据 where id=pid来查出上一级内容，运用递归至顶层。
+
+每一个分类都需要记录他的父级id，当为顶级分类时，父级id为0。这样无论哪个分类，都可以通过父级id 一层层的去查明它的所有的父级，以便清楚知道它所属何种分类，层级深度为几。
+
+2、以全路径实现的无限分类
+表中有一字段path:1,2,3。使用 where path like '1,2,3,%' order by cpath asc查出它以及其子类的列表
+
+
+二：程序调用自身称为递归
+function getList($pid){
+	……
+	if($row){
+		getList($pid);
+	}
+	……
+	return $result;
+}
+以上注意：1、$_GLOBALS[result]；2、static $result；3、参数引用&
+
+三：全路径无限分类
+以一个字段把它所有父级ID按顺序记录下来，以此实现的无限分类就叫做全路径无限分类
+优点：查询方便。	缺点：增加、移动分类时数据维护复杂
+
+原理：利用全路径字段（如1，2,3,4，这样）加上ID组成新字段正序排列，然后再利用字段长度（以，分割）来计算出层级深度。这里的字段指前面组成的新字段长度
+
+四、SQL示例：select id,catename,path,CONCAT(path,',',id) as fullpath from likecate ORDER BY fullpath asc;
+
+concat(str1,str2,...)返回字符串参数连接的结果。
+concat(path,',',id) as fullpath 将字段path、','、id内容连接成新的字段fullpath并返回
