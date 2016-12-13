@@ -1,0 +1,22 @@
+$.ajax({
+			cache:false,
+			type:"POST",
+			url:"b.php?pid=1",
+			dataType:"json",
+			data:obj,
+			timeout:30000,
+			error:function(){
+				alert("error");
+			},
+			success:function(data){
+				$("#lables").empty();
+				var count=data.length;
+				var i=0;
+				var b="";
+				for (var i = 0; i < count; i++) {
+					b += "<option value='"+data[i].id+"'>"+data[i].catename+"</option>";
+				};
+				$("#lables").append(b);
+			}
+
+		});
